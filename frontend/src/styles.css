@@ -10,13 +10,22 @@
 html,body,#root{height:100%;}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Roboto,system-ui,-apple-system}
 .app{display:flex;min-height:100vh}
-.sidebar{width:220px;background:linear-gradient(180deg,var(--panel),#07101a);padding:20px}
+.sidebar{width:220px;background:linear-gradient(180deg,var(--panel),#07101a);padding:20px;display:flex;flex-direction:column;height:100vh;position:relative}
+.sidebar-header{margin-bottom:20px}
 .sidebar h1{font-size:16px;margin:0 0 16px}
-.nav a{display:block;color:var(--muted);text-decoration:none;padding:8px;border-radius:6px;margin-bottom:6px}
+.nav{flex:1;overflow-y:auto}
+.nav a{display:block;color:var(--muted);text-decoration:none;padding:8px;border-radius:6px;margin-bottom:6px;transition:all 0.3s ease}
 .nav a.active, .nav a:hover{background:rgba(124,92,255,0.12);color:var(--text)}
-.content{flex:1;padding:24px}
+.sidebar-footer{border-top:1px solid rgba(124,92,255,0.1);padding-top:16px;margin-top:auto}
+.user-info{margin-bottom:12px;padding:0 8px}
+.user-name{font-size:13px;font-weight:600;margin:0 0 2px;color:var(--text)}
+.user-email{font-size:12px;margin:0;color:var(--muted)}
+.btn-logout-sidebar{width:100%;padding:8px;background:rgba(124,92,255,0.2);color:var(--accent);border:1px solid rgba(124,92,255,0.3);cursor:pointer;border-radius:6px;transition:all 0.3s ease;font-size:12px;font-weight:600}
+.btn-logout-sidebar:hover{background:rgba(124,92,255,0.3);border-color:rgba(124,92,255,0.5)}
+.content{flex:1;padding:24px;overflow-y:auto}
 .cards{display:flex;gap:16px;flex-wrap:wrap}
 .card{background:var(--card);padding:16px;border-radius:10px;min-width:200px}
 .chart{background:transparent;padding:12px;border-radius:8px}
 .form-row{display:flex;gap:8px;flex-wrap:wrap}
 input,select,button{padding:8px;border-radius:6px;border:1px solid #122029;background:#071018;color:var(--text)}
+
