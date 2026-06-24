@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { reportAPI } from '../api/reports';
 import { stagger, fadeUp } from '../lib/motion';
 import '../styles/dashboard.css';
 
 const reportTypes = [
-  { id: 'repo', title: 'Repository Report', desc: 'Detailed analysis of individual repositories', icon: '&#128218;' },
+  { id: 'repository', title: 'Repository Report', desc: 'Detailed analysis of individual repositories', icon: '&#128218;' },
   { id: 'team', title: 'Team Report', desc: 'Team performance and collaboration metrics', icon: '&#128101;' },
   { id: 'risk', title: 'Risk Report', desc: 'Comprehensive risk assessment across projects', icon: '&#9888;' },
   { id: 'health', title: 'Health Report', desc: 'Overall software health and quality metrics', icon: '&#128154;' },
@@ -21,9 +22,16 @@ const recentReports = [
 export default function Reports() {
   const [generating, setGenerating] = useState(null);
 
-  const generate = (id) => {
-    setGenerating(id);
-    setTimeout(() => setGenerating(null), 2000);
+  const download = async (id, format) => {
+    setGenerating(`${id}-${format}`);
+    try {
+      if (format === 'pdf') await reportAPI.downloadPDF(id);
+      else if (format === 'excel') await reportAPI.downloadExcel(id);
+      else if (format === 'csv') await reportAPI.downloadCSV(id);
+    } catch (err) {
+      console.error('Download failed:', err);
+    }
+    setGenerating(null);
   };
 
   return (
@@ -31,7 +39,6 @@ export default function Reports() {
       <motion.h1 className="page-heading" variants={fadeUp}>Reports</motion.h1>
       <motion.p className="page-sub" variants={fadeUp}>Generate and download detailed analytics reports</motion.p>
 
-      {/* Report types */}
       <div className="section-title"><h2>Generate Report</h2></div>
       <motion.div className="report-types-grid" variants={stagger}>
         {reportTypes.map((r) => (
@@ -40,17 +47,20 @@ export default function Reports() {
             <h4>{r.title}</h4>
             <p>{r.desc}</p>
             <div className="report-actions">
-              <button className="btn btn-ghost" type="button" onClick={() => generate(r.id)} style={{ fontSize: 12, padding: '8px 12px' }}>
-                {generating === r.id ? 'Generating...' : 'PDF'}
+              <button className="btn btn-ghost" type="button" onClick={() => download(r.id, 'pdf')} style={{ fontSize: 12, padding: '8px 12px' }}>
+                {generating === `${r.id}-pdf` ? 'Generating...' : 'PDF'}
               </button>
-              <button className="btn btn-ghost" type="button" style={{ fontSize: 12, padding: '8px 12px' }}>Excel</button>
-              <button className="btn btn-ghost" type="button" style={{ fontSize: 12, padding: '8px 12px' }}>CSV</button>
+              <button className="btn btn-ghost" type="button" onClick={() => download(r.id, 'excel')} style={{ fontSize: 12, padding: '8px 12px' }}>
+                {generating === `${r.id}-excel` ? 'Generating...' : 'Excel'}
+              </button>
+              <button className="btn btn-ghost" type="button" onClick={() => download(r.id, 'csv')} style={{ fontSize: 12, padding: '8px 12px' }}>
+                {generating === `${r.id}-csv` ? 'Generating...' : 'CSV'}
+              </button>
             </div>
           </motion.div>
         ))}
       </motion.div>
 
-      {/* Recent reports */}
       <div className="section-title"><h2>Recent Reports</h2></div>
       <motion.div className="glass" style={{ borderRadius: 'var(--radius)', overflow: 'hidden' }} variants={fadeUp}>
         <div className="table-wrap">

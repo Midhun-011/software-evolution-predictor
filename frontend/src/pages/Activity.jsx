@@ -1,25 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { activityAPI } from '../api/activity';
 import { stagger, fadeUp } from '../lib/motion';
 import '../styles/dashboard.css';
 
-const logs = [
-  { id: 1, action: 'Login', user: 'Test User', detail: 'Logged in from Chrome on Linux', time: '2 min ago', type: 'auth' },
-  { id: 2, action: 'Repository Analysis', user: 'Test User', detail: 'Ran analysis on facebook/react', time: '15 min ago', type: 'repo' },
-  { id: 3, action: 'Settings Changed', user: 'Test User', detail: 'Updated notification preferences', time: '1 hour ago', type: 'settings' },
-  { id: 4, action: 'Report Generated', user: 'Test User', detail: 'Generated Q4 Risk Assessment PDF', time: '3 hours ago', type: 'report' },
-  { id: 5, action: 'Repository Added', user: 'Alex Johnson', detail: 'Added vercel/next.js repository', time: '5 hours ago', type: 'repo' },
-  { id: 6, action: 'Team Invite', user: 'Test User', detail: 'Invited emily@example.com as Developer', time: '1 day ago', type: 'team' },
-  { id: 7, action: 'Password Changed', user: 'Test User', detail: 'Password updated successfully', time: '2 days ago', type: 'auth' },
-  { id: 8, action: 'Login Failed', user: 'Unknown', detail: 'Failed login attempt from 192.168.1.50', time: '3 days ago', type: 'security' },
-  { id: 9, action: 'Report Downloaded', user: 'Sarah Chen', detail: 'Downloaded Monthly Analytics - November', time: '5 days ago', type: 'report' },
-  { id: 10, action: 'Login', user: 'Mike Rodriguez', detail: 'Logged in from Safari on macOS', time: '1 week ago', type: 'auth' },
+const fallbackLogs = [
+  { _id: '1', action: 'Login', user: 'Test User', detail: 'Logged in from Chrome on Linux', createdAt: new Date(Date.now() - 120000), type: 'auth' },
+  { _id: '2', action: 'Repository Analysis', user: 'Test User', detail: 'Ran analysis on facebook/react', createdAt: new Date(Date.now() - 900000), type: 'repo' },
+  { _id: '3', action: 'Settings Changed', user: 'Test User', detail: 'Updated notification preferences', createdAt: new Date(Date.now() - 3600000), type: 'settings' },
+  { _id: '4', action: 'Report Generated', user: 'Test User', detail: 'Generated Q4 Risk Assessment PDF', createdAt: new Date(Date.now() - 10800000), type: 'report' },
+  { _id: '5', action: 'Repository Added', user: 'Alex Johnson', detail: 'Added vercel/next.js', createdAt: new Date(Date.now() - 18000000), type: 'repo' },
+  { _id: '6', action: 'Team Invite', user: 'Test User', detail: 'Invited emily@example.com as Developer', createdAt: new Date(Date.now() - 86400000), type: 'team' },
+  { _id: '7', action: 'Password Changed', user: 'Test User', detail: 'Password updated successfully', createdAt: new Date(Date.now() - 172800000), type: 'auth' },
+  { _id: '8', action: 'Login Failed', user: 'Unknown', detail: 'Failed login attempt from 192.168.1.50', createdAt: new Date(Date.now() - 259200000), type: 'security' },
 ];
 
 const typeColors = { auth: '#38bdf8', repo: '#34d399', settings: '#a78bfa', report: '#f59e0b', team: '#22d3ee', security: '#f87171' };
 
+function timeAgo(d) {
+  const s = Math.floor((Date.now() - new Date(d).getTime()) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return `${Math.floor(s / 60)} min ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)} hours ago`;
+  return `${Math.floor(s / 86400)} days ago`;
+}
+
 export default function Activity() {
+  const [logs, setLogs] = useState(fallbackLogs);
   const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    activityAPI.list().then(setLogs).catch(() => {});
+  }, []);
+
   const filtered = filter === 'all' ? logs : logs.filter((l) => l.type === filter);
 
   return (
@@ -41,11 +54,11 @@ export default function Activity() {
             <thead><tr><th>Action</th><th>User</th><th>Detail</th><th>Time</th><th>Type</th></tr></thead>
             <tbody>
               {filtered.map((l) => (
-                <tr key={l.id}>
+                <tr key={l._id}>
                   <td style={{ fontWeight: 600 }}>{l.action}</td>
-                  <td>{l.user}</td>
+                  <td>{l.user || 'You'}</td>
                   <td style={{ color: 'var(--text-muted)', maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.detail}</td>
-                  <td style={{ color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{l.time}</td>
+                  <td style={{ color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{timeAgo(l.createdAt)}</td>
                   <td>
                     <span className="badge" style={{ color: typeColors[l.type], background: `${typeColors[l.type]}22`, border: `1px solid ${typeColors[l.type]}44` }}>
                       {l.type}
