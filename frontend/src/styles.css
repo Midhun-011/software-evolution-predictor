@@ -1,0 +1,22 @@
+:root{
+  --bg:#0b0f14;
+  --panel:#0f1720;
+  --muted:#9aa4b2;
+  --accent:#7c5cff;
+  --card:#0e1620;
+  --text:#e6eef8;
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Roboto,system-ui,-apple-system}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:linear-gradient(180deg,var(--panel),#07101a);padding:20px}
+.sidebar h1{font-size:16px;margin:0 0 16px}
+.nav a{display:block;color:var(--muted);text-decoration:none;padding:8px;border-radius:6px;margin-bottom:6px}
+.nav a.active, .nav a:hover{background:rgba(124,92,255,0.12);color:var(--text)}
+.content{flex:1;padding:24px}
+.cards{display:flex;gap:16px;flex-wrap:wrap}
+.card{background:var(--card);padding:16px;border-radius:10px;min-width:200px}
+.chart{background:transparent;padding:12px;border-radius:8px}
+.form-row{display:flex;gap:8px;flex-wrap:wrap}
+input,select,button{padding:8px;border-radius:6px;border:1px solid #122029;background:#071018;color:var(--text)}
