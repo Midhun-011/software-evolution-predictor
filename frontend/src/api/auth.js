@@ -1,32 +1,58 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api/auth';
+// Use relative paths in dev, full URL in production
+const API_URL = import.meta.env.DEV ? '/api/auth' : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/auth`;
+
+// Create axios instance with credentials
+const apiClient = axios.create({
+  baseURL: API_URL,
+  withCredentials: true
+});
+
+// Add token to requests
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const authAPI = {
   register: async (name, email, password, confirmPassword) => {
-    const response = await axios.post(`${API_URL}/register`, {
-      name,
-      email,
-      password,
-      confirmPassword
-    });
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    try {
+      const response = await apiClient.post('/register', {
+        name,
+        email,
+        password,
+        confirmPassword
+      });
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Registration error:', err.response?.data || err.message);
+      throw err;
     }
-    return response.data;
   },
 
   login: async (email, password) => {
-    const response = await axios.post(`${API_URL}/login`, {
-      email,
-      password
-    });
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    try {
+      const response = await apiClient.post('/login', {
+        email,
+        password
+      });
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Login error:', err.response?.data || err.message);
+      throw err;
     }
-    return response.data;
   },
 
   logout: () => {
@@ -39,11 +65,10 @@ export const authAPI = {
     if (!token) return null;
 
     try {
-      const response = await axios.get(`${API_URL}/verify`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await apiClient.get('/verify');
       return response.data.user;
     } catch (err) {
+      console.error('Token verification failed:', err.response?.data || err.message);
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       return null;

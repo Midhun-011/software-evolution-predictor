@@ -11,11 +11,16 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check if user is already logged in
     const checkAuth = async () => {
-      const verifiedUser = await authAPI.verify();
-      if (verifiedUser) {
-        setUser(verifiedUser);
+      try {
+        const verifiedUser = await authAPI.verify();
+        if (verifiedUser) {
+          setUser(verifiedUser);
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     checkAuth();
@@ -26,10 +31,12 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       const response = await authAPI.login(email, password);
       setUser(response.user);
+      console.log('Login successful:', response.user);
       return response;
     } catch (err) {
-      const errorMsg = err.response?.data?.error || 'Login failed';
+      const errorMsg = err.response?.data?.error || err.message || 'Login failed';
       setError(errorMsg);
+      console.error('Login failed:', errorMsg);
       throw err;
     }
   };
@@ -39,10 +46,12 @@ export const AuthProvider = ({ children }) => {
       setError(null);
       const response = await authAPI.register(name, email, password, confirmPassword);
       setUser(response.user);
+      console.log('Registration successful:', response.user);
       return response;
     } catch (err) {
-      const errorMsg = err.response?.data?.error || 'Registration failed';
+      const errorMsg = err.response?.data?.error || err.message || 'Registration failed';
       setError(errorMsg);
+      console.error('Registration failed:', errorMsg);
       throw err;
     }
   };
@@ -50,6 +59,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     authAPI.logout();
     setUser(null);
+    setError(null);
   };
 
   return (
