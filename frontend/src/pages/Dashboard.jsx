@@ -13,6 +13,8 @@ import {
   IconAlert,
   IconPlus,
   IconBell,
+  IconChart,
+  IconTarget,
 } from '../components/icons';
 import { stagger, fadeUp } from '../lib/motion';
 import '../styles/dashboard.css';
@@ -46,10 +48,12 @@ export default function Dashboard() {
       </motion.section>
 
       {/* Stat cards */}
-      <motion.div className="stats-grid" variants={stagger}>
+      <motion.div className="stats-grid six" variants={stagger}>
         <StatCard icon={<IconRepo size={22} />} iconClass="indigo" label="Repositories" value="5" trend="12%" trendUp />
-        <StatCard icon={<IconCode size={22} />} iconClass="cyan" label="Lines of Code" value="1.2M" trend="8%" trendUp />
-        <StatCard icon={<IconShield size={22} />} iconClass="green" label="Code Quality Score" value="78" trend="5%" trendUp />
+        <StatCard icon={<IconChart size={22} />} iconClass="cyan" label="Total Commits" value="2,847" trend="18%" trendUp />
+        <StatCard icon={<IconTarget size={22} />} iconClass="green" label="Contributors" value="42" trend="6%" trendUp />
+        <StatCard icon={<IconCode size={22} />} iconClass="amber" label="Lines of Code" value="1.2M" trend="8%" trendUp />
+        <StatCard icon={<IconShield size={22} />} iconClass="indigo" label="Code Quality" value="78" trend="5%" trendUp />
         <StatCard icon={<IconAlert size={22} />} iconClass="amber" label="Predicted Risk" value="Low" trend="3%" trendUp={false} />
       </motion.div>
 

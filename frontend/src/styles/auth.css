@@ -122,7 +122,95 @@
   color: #9aa6c2;
 }
 
+/* Logo */
+.auth-logo { margin-bottom: 14px; }
+
+/* Password toggle */
+.input-wrap { position: relative; }
+.input-wrap input { padding-right: 60px; }
+.pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #9aa6c2;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.2s ease;
+  font-family: inherit;
+}
+.pw-toggle:hover { color: #e8eefc; }
+
+/* Strength bar */
+.strength-bar-wrap { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.strength-bar { display: flex; gap: 4px; flex: 1; }
+.strength-seg { height: 4px; flex: 1; border-radius: 99px; transition: background 0.3s ease; }
+.strength-label { font-size: 12px; font-weight: 600; min-width: 48px; }
+.field-error { display: block; font-size: 12px; color: #fca5a5; margin-top: 6px; }
+
+/* Checkbox rows */
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #9aa6c2;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+.checkbox-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  accent-color: #8b5cf6;
+  margin-top: 1px;
+  border-radius: 4px;
+}
+
+.form-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.form-meta-row .checkbox-row { margin-bottom: 0; }
+
+/* Two-column form row */
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* Step indicators (forgot password) */
+.step-indicators { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+.step-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  transition: background 0.3s ease;
+}
+.step-dot.active { background: #8b5cf6; }
+
+/* Link button */
+.btn-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 12px;
+  background: none;
+  border: none;
+  color: #a78bfa;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-link:hover { color: #c4b5fd; text-decoration: underline; }
+
 @media (max-width: 480px) {
   .auth-card { padding: 28px 18px; }
   .auth-header h1 { font-size: 22px; }
+  .form-row-2 { grid-template-columns: 1fr; }
 }
